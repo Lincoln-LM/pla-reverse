@@ -28,13 +28,26 @@ CONSTANTS["NULL_SPACE"] = ",".join(
     )
 )
 CONSTANTS["IVS"] = input("IVs (comma seperated, ex. '31,31,31,31,31,31'): ")
+ivs_array = tuple(int(iv) for iv in CONSTANTS["IVS"].split(","))
 CONSTANTS["ABILITY"] = int(input("Ability (0/1): "))
 CONSTANTS["GENDER_RATIO"] = int(input("Gender Ratio (255/254/225/191/127/63/31/0): "))
 CONSTANTS["GENDER"] = int(input("Gender (M=0, F=1, G=2): "))
 CONSTANTS["NATURE"] = int(input("Nature (0-24): "))
-CONSTANTS["HEIGHT"] = int(input("Height (0-255): "))
-CONSTANTS["WEIGHT"] = int(input("Weight (0-255): "))
+CONSTANTS["SIZES"] = input(
+    "Sizes (comma seperated, {height, weight}, ex. '{127,128},{200,255},{28,100}'): "
+)
+sizes_array = tuple(
+    tuple(
+        int(size_val) for size_val in size.replace("{", "").replace("}", "").split(",")
+    )
+    for size in CONSTANTS["SIZES"].split("},")
+)
+CONSTANTS["SIZES_COUNT"] = len(sizes_array)
 
+expected_seeds = pla_reverse.odds.calc_expected_seeds(
+    CONSTANTS["GENDER"], CONSTANTS["GENDER_RATIO"], sizes_array
+)
+print(f"Expecting around {expected_seeds} to be found")
 
 program = cl.Program(
     context, pla_reverse.shaders.build_shader_code("fixed_seed_shader", CONSTANTS)
@@ -55,7 +68,7 @@ host_count = np.empty_like(host_count)
 cl.enqueue_copy(queue, host_results, device_results)
 cl.enqueue_copy(queue, host_count, device_count)
 
-host_results = host_results[: host_count[0] - 1]
+host_results = host_results[: host_count[0]]
 
 print(f"{host_count[0]} total fixed seeds found!")
 print("Verifying all fixed seeds ...")
@@ -63,7 +76,7 @@ print("Verifying all fixed seeds ...")
 for fixed_seed in tqdm.tqdm(host_results):
     rng = Xoroshiro128PlusRejection(fixed_seed)
     rng.advance(2 + CONSTANTS["SHINY_ROLLS"])
-    ivs = [rng.next_rand(32) for _ in range(6)]
+    ivs = tuple(rng.next_rand(32) for _ in range(6))
     ability = rng.next_rand(2)
     if 1 <= CONSTANTS["GENDER_RATIO"] <= 253:
         gender_val = rng.next_rand(253)
@@ -71,9 +84,7 @@ for fixed_seed in tqdm.tqdm(host_results):
     nature = rng.next_rand(25)
     height = rng.next_rand(0x81) + rng.next_rand(0x80)
     weight = rng.next_rand(0x81) + rng.next_rand(0x80)
-    assert ivs == [
-        int(iv) for iv in CONSTANTS["IVS"].split(",")
-    ], f"IVs were wrong! {ivs} {[int(iv) for iv in CONSTANTS['IVS'].split(',')]}"
+    assert ivs == ivs_array, f"IVs were wrong! {ivs} {ivs_array}"
     assert (
         ability == CONSTANTS["ABILITY"]
     ), f"Ability was wrong! {ability} {CONSTANTS['ABILITY']}"
@@ -85,10 +96,8 @@ for fixed_seed in tqdm.tqdm(host_results):
         nature == CONSTANTS["NATURE"]
     ), f"Nature was wrong! {nature} {CONSTANTS['NATURE']}"
     assert (
-        height == CONSTANTS["HEIGHT"]
-    ), f"Height was wrong! {height} {CONSTANTS['HEIGHT']}"
-    assert (
-        weight == CONSTANTS["WEIGHT"]
-    ), f"Weight was wrong! {weight} {CONSTANTS['WEIGHT']}"
+        height,
+        weight,
+    ) in sizes_array, f"Height/Weight was wrong! {height} {weight} {sizes_array}"
 
 print("All fixed seeds found were valid!")

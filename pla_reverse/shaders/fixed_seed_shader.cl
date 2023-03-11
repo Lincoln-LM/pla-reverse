@@ -1,14 +1,14 @@
-__constant unsigned char IVS[6] = {{IVS_REPLACE}};
-__constant unsigned char ABILITY = {ABILITY_REPLACE};
-__constant unsigned char GENDER_RATIO = {GENDER_RATIO_REPLACE};
-__constant unsigned char GENDER = {GENDER_REPLACE};
-__constant unsigned char NATURE = {NATURE_REPLACE};
-__constant unsigned char HEIGHT = {HEIGHT_REPLACE};
-__constant unsigned char WEIGHT = {WEIGHT_REPLACE};
-__constant unsigned char SHINY_ROLLS = {SHINY_ROLLS_REPLACE};
-__constant ulong IV_CONST = {IV_CONST_REPLACE};
-__constant ulong SEED_MAT[64] = {{SEED_MAT_REPLACE}};
-__constant ulong NULL_SPACE[16] = {{NULL_SPACE_REPLACE}};
+__constant unsigned char IVS[6] = {}; // REPLACE: __constant unsigned char IVS[6] = {IVS_REPLACE};
+__constant unsigned char ABILITY = 0; // REPLACE: __constant unsigned char ABILITY = ABILITY_REPLACE;
+__constant unsigned char GENDER_RATIO = 0; // REPLACE: __constant unsigned char GENDER_RATIO = GENDER_RATIO_REPLACE;
+__constant unsigned char GENDER = 0; // REPLACE: __constant unsigned char GENDER = GENDER_REPLACE;
+__constant unsigned char NATURE = 0; // REPLACE: __constant unsigned char NATURE = NATURE_REPLACE;
+__constant unsigned char SIZES[0][2] = {}; // REPLACE: __constant unsigned char SIZES[SIZES_COUNT_REPLACE][2] = {SIZES_REPLACE};
+__constant unsigned char SIZES_COUNT = 0; // REPLACE: __constant unsigned char SIZES_COUNT = SIZES_COUNT_REPLACE;
+__constant unsigned char SHINY_ROLLS = 0; // REPLACE: __constant unsigned char SHINY_ROLLS = SHINY_ROLLS_REPLACE;
+__constant ulong IV_CONST = 0; // REPLACE: __constant ulong IV_CONST = IV_CONST_REPLACE;
+__constant ulong SEED_MAT[64] = {}; // REPLACE: __constant ulong SEED_MAT[64] = {SEED_MAT_REPLACE};
+__constant ulong NULL_SPACE[16] = {}; // REPLACE: __constant ulong NULL_SPACE[16] = {NULL_SPACE_REPLACE};
 
 struct xoroshiro {
     unsigned long seed_0;
@@ -46,32 +46,43 @@ inline unsigned long rand_mask(struct xoroshiro* rng, const unsigned long mask) 
 
 bool verify(unsigned long fixed_seed) {
     struct xoroshiro rng = {fixed_seed, 0x82A2B175229D6A5B};
+
     for (int i = 0; i < 2 + SHINY_ROLLS + 6; i++) {
         advance(&rng);
     }
+
     unsigned char ability = rand(&rng, 2, 1);
     if (ability != ABILITY) {
         return false;
     }
-    if (1 <= GENDER_RATIO && GENDER_RATIO <= 253) {
+
+    if (1 <= GENDER_RATIO && GENDER_RATIO <= 254) {
         unsigned char gender_val = rand(&rng, 253, 255);
         unsigned char gender = (gender_val + 1) < GENDER_RATIO;
         if (gender != GENDER) {
             return false;
         }
     }
+
     unsigned char nature = rand(&rng, 25, 31);
     if (nature != NATURE) {
         return false;
     }
+
     unsigned char height = rand(&rng, 129, 255) + rand(&rng, 128, 127);
-    if (height != HEIGHT) {
-        return false;
-    }
     unsigned char weight = rand(&rng, 129, 255) + rand(&rng, 128, 127);
-    if (weight != WEIGHT) {
+
+    bool passes = false;
+    for (int i = 0; i < SIZES_COUNT; i++) {
+        if (SIZES[i][0] == height && SIZES[i][1] == weight) {
+            passes = true;
+            break;
+        }
+    }
+    if (!passes) {
         return false;
     }
+
     return true;
 }
 
@@ -103,12 +114,14 @@ __kernel void find_fixed_seeds(
         (((IVS[5] - f) & 31) << 50) |
         (f << 55)
     ) ^ IV_CONST;
+
     unsigned long  base_seed = 0;
     for (int i = 0; vec; vec >>= 1, i++) {
         if (vec & 1) {
             base_seed ^= SEED_MAT[i];
         }
     }
+
     for (int i = 0; i < 16; i++) {
         unsigned long  seed = base_seed ^ NULL_SPACE[i];
         if (verify(seed)) {
