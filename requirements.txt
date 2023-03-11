@@ -1,0 +1,9 @@
+llvmlite==0.39.1
+numba==0.56.4
+numba-pokemon-prngs @ git+https://github.com/Lincoln-LM/numba_pokemon_prngs@b1b7bb3242c3f07c1c23f460b449d45706b79fb4
+numpy==1.23.5
+platformdirs==3.1.1
+pyopencl==2022.3.1
+pytools==2022.1.14
+tqdm==4.65.0
+typing-extensions==4.5.0
