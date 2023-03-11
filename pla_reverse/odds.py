@@ -24,13 +24,15 @@ def calc_gender_odds(gender, gender_ratio):
     """Calculate the odds of a specific gender with a gender ratio"""
     if gender == 2 or gender_ratio in (255, 254, 0):
         return 1
-    return 253/sum(((gender_val + 1) < gender_ratio) == gender for gender_val in range(253))
+    return 253 / sum(
+        ((gender_val + 1) < gender_ratio) == gender for gender_val in range(253)
+    )
 
 
-def calc_expected_seeds(gender, gender_ratio, sizes):
+def calc_expected_seeds(has_two_abilities, gender, gender_ratio, sizes):
     """Calculate the expected amount of seeds from an iv search"""
     return 2**34 / (
-        2
+        (2 if has_two_abilities else 1)
         * 25
         * calc_gender_odds(gender, gender_ratio)
         * calc_size_list_odds(sizes)

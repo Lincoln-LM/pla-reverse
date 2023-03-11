@@ -1,10 +1,10 @@
 __constant unsigned char IVS[6] = {}; // REPLACE: __constant unsigned char IVS[6] = {IVS_REPLACE};
+__constant bool TWO_ABILITIES = 0; // REPLACE: __constant bool TWO_ABILITIES = TWO_ABILITIES_REPLACE;
 __constant unsigned char ABILITY = 0; // REPLACE: __constant unsigned char ABILITY = ABILITY_REPLACE;
 __constant unsigned char GENDER_RATIO = 0; // REPLACE: __constant unsigned char GENDER_RATIO = GENDER_RATIO_REPLACE;
 __constant unsigned char GENDER = 0; // REPLACE: __constant unsigned char GENDER = GENDER_REPLACE;
 __constant unsigned char NATURE = 0; // REPLACE: __constant unsigned char NATURE = NATURE_REPLACE;
-__constant unsigned char SIZES[0][2] = {}; // REPLACE: __constant unsigned char SIZES[SIZES_COUNT_REPLACE][2] = {SIZES_REPLACE};
-__constant unsigned char SIZES_COUNT = 0; // REPLACE: __constant unsigned char SIZES_COUNT = SIZES_COUNT_REPLACE;
+__constant unsigned short SIZES[65536] = {}; // REPLACE: __constant unsigned short SIZES[65536] = {SIZES_REPLACE};
 __constant unsigned char SHINY_ROLLS = 0; // REPLACE: __constant unsigned char SHINY_ROLLS = SHINY_ROLLS_REPLACE;
 __constant ulong IV_CONST = 0; // REPLACE: __constant ulong IV_CONST = IV_CONST_REPLACE;
 __constant ulong SEED_MAT[64] = {}; // REPLACE: __constant ulong SEED_MAT[64] = {SEED_MAT_REPLACE};
@@ -52,7 +52,7 @@ bool verify(unsigned long fixed_seed) {
     }
 
     unsigned char ability = rand(&rng, 2, 1);
-    if (ability != ABILITY) {
+    if (TWO_ABILITIES && (ability != ABILITY)) {
         return false;
     }
 
@@ -69,17 +69,10 @@ bool verify(unsigned long fixed_seed) {
         return false;
     }
 
-    unsigned char height = rand(&rng, 129, 255) + rand(&rng, 128, 127);
-    unsigned char weight = rand(&rng, 129, 255) + rand(&rng, 128, 127);
+    unsigned short height = rand(&rng, 129, 255) + rand(&rng, 128, 127);
+    unsigned short weight = rand(&rng, 129, 255) + rand(&rng, 128, 127);
 
-    bool passes = false;
-    for (int i = 0; i < SIZES_COUNT; i++) {
-        if (SIZES[i][0] == height && SIZES[i][1] == weight) {
-            passes = true;
-            break;
-        }
-    }
-    if (!passes) {
+    if (!SIZES[(height << 8) | weight]) {
         return false;
     }
 
@@ -123,7 +116,7 @@ __kernel void find_fixed_seeds(
     }
 
     for (int i = 0; i < 16; i++) {
-        unsigned long  seed = base_seed ^ NULL_SPACE[i];
+        unsigned long seed = base_seed ^ NULL_SPACE[i];
         if (verify(seed)) {
             res_g[atomic_inc(&cnt[0])] = seed;
         }
