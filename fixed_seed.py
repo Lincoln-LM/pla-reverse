@@ -66,7 +66,7 @@ expected_seeds = pla_reverse.odds.calc_expected_seeds(
     CONSTANTS["GENDER_RATIO"],
     sizes_array,
 )
-print(f"Expecting around {expected_seeds} to be found.")
+print(f"Expecting around {expected_seeds} seeds to be found.")
 
 program = cl.Program(
     context, pla_reverse.shaders.build_shader_code("fixed_seed_shader", CONSTANTS)
@@ -82,7 +82,7 @@ kernel = program.find_fixed_seeds
 kernel(
     queue,
     (32**2, 32**2, 32**2),
-    (4, 4, 4),
+    None,
     device_count,
     device_results,
 )
