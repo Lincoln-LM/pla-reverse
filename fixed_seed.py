@@ -54,11 +54,30 @@ else:
     height = input("Height (ex 0.92): ")
     height = float(height)
     weight = float(input("Weight (ex. 3.80): "))
-sizes_array = pla_reverse.size.all_possible_sizes(dex_number, height, weight, imperial)
+sizes_array = set(
+    pla_reverse.size.all_possible_sizes(dex_number, height, weight, imperial)
+)
+add_evolution_sizes = True
+while add_evolution_sizes:
+    print(f"{len(sizes_array)} possible sizes.")
+    add_evolution_sizes = int(input("Add evolution sizes? (0/1): "))
+    if not add_evolution_sizes:
+        break
+    dex_number_ = int(input("National Dex Number: "))
+    if imperial:
+        height = input("Height (ex 5'2): ").replace('"', "").split("'")
+        height = int(height[0]), int(height[1])
+        weight = float(input("Weight (ex. 3.8): "))
+    else:
+        height = input("Height (ex 0.92): ")
+        height = float(height)
+        weight = float(input("Weight (ex. 3.80): "))
+    sizes_array &= set(
+        pla_reverse.size.all_possible_sizes(dex_number_, height, weight, imperial)
+    )
 sizes_set = {pla_reverse.size.scalars_to_ushort(*size) for size in sizes_array}
 sizes_table = tuple((1 if i in sizes_set else 0) for i in range(0x10000))
 CONSTANTS["SIZES"] = str(sizes_table)[1:-1]
-print(f"{len(sizes_set)} possible sizes.")
 
 expected_seeds = pla_reverse.odds.calc_expected_seeds(
     CONSTANTS["TWO_ABILITIES"],
