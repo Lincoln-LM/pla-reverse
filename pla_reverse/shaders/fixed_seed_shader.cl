@@ -4,7 +4,7 @@ __constant unsigned char ABILITY = 0; // REPLACE: __constant unsigned char ABILI
 __constant unsigned char GENDER_RATIO = 0; // REPLACE: __constant unsigned char GENDER_RATIO = GENDER_RATIO_REPLACE;
 __constant unsigned char GENDER = 0; // REPLACE: __constant unsigned char GENDER = GENDER_REPLACE;
 __constant unsigned char NATURE = 0; // REPLACE: __constant unsigned char NATURE = NATURE_REPLACE;
-__constant unsigned short SIZES[65536] = {}; // REPLACE: __constant unsigned short SIZES[65536] = {SIZES_REPLACE};
+__constant unsigned char SIZES[8192] = {}; // REPLACE: __constant unsigned short SIZES[8192] = {SIZES_REPLACE};
 __constant unsigned char SHINY_ROLLS = 0; // REPLACE: __constant unsigned char SHINY_ROLLS = SHINY_ROLLS_REPLACE;
 __constant ulong IV_CONST = 0; // REPLACE: __constant ulong IV_CONST = IV_CONST_REPLACE;
 __constant ulong SEED_MAT[64] = {}; // REPLACE: __constant ulong SEED_MAT[64] = {SEED_MAT_REPLACE};
@@ -71,8 +71,9 @@ bool verify(unsigned long fixed_seed) {
 
     unsigned short height = rand(&rng, 129, 255) + rand(&rng, 128, 127);
     unsigned short weight = rand(&rng, 129, 255) + rand(&rng, 128, 127);
+    unsigned short size = (height << 8) | weight;
 
-    if (!SIZES[(height << 8) | weight]) {
+    if (((SIZES[size >> 3] >> (size & 7)) & 1) == 0) {
         return false;
     }
 

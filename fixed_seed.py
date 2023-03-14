@@ -54,12 +54,12 @@ else:
     height = input("Height (ex 0.92): ")
     height = float(height)
     weight = float(input("Weight (ex. 3.80): "))
-sizes_array = set(
+sizes_set = set(
     pla_reverse.size.all_possible_sizes(dex_number, height, weight, imperial)
 )
 add_evolution_sizes = True
 while add_evolution_sizes:
-    print(f"{len(sizes_array)} possible sizes.")
+    print(f"{len(sizes_set)} possible sizes.")
     add_evolution_sizes = int(input("Add evolution sizes? (0/1): "))
     if not add_evolution_sizes:
         break
@@ -72,18 +72,17 @@ while add_evolution_sizes:
         height = input("Height (ex 0.92): ")
         height = float(height)
         weight = float(input("Weight (ex. 3.80): "))
-    sizes_array &= set(
+    sizes_set &= set(
         pla_reverse.size.all_possible_sizes(dex_number_, height, weight, imperial)
     )
-sizes_set = {pla_reverse.size.scalars_to_ushort(*size) for size in sizes_array}
-sizes_table = tuple((1 if i in sizes_set else 0) for i in range(0x10000))
-CONSTANTS["SIZES"] = str(sizes_table)[1:-1]
+
+CONSTANTS["SIZES"] = str(pla_reverse.size.build_sizes_table(sizes_set))[1:-1]
 
 expected_seeds = pla_reverse.odds.calc_expected_seeds(
     CONSTANTS["TWO_ABILITIES"],
     CONSTANTS["GENDER"],
     CONSTANTS["GENDER_RATIO"],
-    sizes_array,
+    sizes_set,
 )
 print(f"Expecting around {expected_seeds} seeds to be found.")
 
@@ -147,7 +146,7 @@ if verify:
         assert (
             height,
             weight,
-        ) in sizes_array, f"Height/Weight was wrong! {height} {weight} {sizes_array}"
+        ) in sizes_set, f"Height/Weight was wrong! {height} {weight} {sizes_set}"
 
     print("All fixed seeds found were valid!")
 if filename := input("Filename to save (empty to not save): "):

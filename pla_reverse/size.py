@@ -79,3 +79,12 @@ def all_possible_sizes(
 def scalars_to_ushort(height_scalar: np.uint8, weight_scalar: np.uint8):
     """Convert scalars to a single ushort"""
     return (np.uint16(height_scalar) << np.uint16(8)) | np.uint16(weight_scalar)
+
+
+def build_sizes_table(sizes_set: set) -> tuple:
+    """Build sizes table for shader usage"""
+    sizes_set_ = {scalars_to_ushort(*size) for size in sizes_set}
+    sizes_table = [0 for _ in range(0x10000 // 8)]
+    for i in range(0x10000):
+        sizes_table[i // 8] |= (1 << (i % 8)) if i in sizes_set_ else 0
+    return tuple(sizes_table)
