@@ -31,8 +31,8 @@ def calc_display_size(
     weight_ratio = calc_size_ratio(weight_scalar)
     ratio = weight_ratio * height_ratio
 
-    height_absolute = np.uint8(PERSONAL_INFO_LA[species].height) * height_ratio
-    weight_absolute = np.uint8(PERSONAL_INFO_LA[species].weight) * ratio
+    height_absolute = np.uint16(PERSONAL_INFO_LA[species].height) * height_ratio
+    weight_absolute = np.uint16(PERSONAL_INFO_LA[species].weight) * ratio
 
     if imperial:
         # TODO: more precise divisors
