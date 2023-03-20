@@ -1,3 +1,5 @@
+__constant bool IS_MULTISPAWNER = 0; // REPLACE: __constant bool IS_MULTISPAWNER = IS_MULTISPAWNER_REPLACE;
+
 struct xoroshiro {
     unsigned long seed_0;
     unsigned long seed_1;
@@ -24,8 +26,11 @@ inline bool verify(__global ulong *fixed_seeds, const int fixed_seeds_length, ul
     struct xoroshiro rng = {generator_seed - 0x82A2B175229D6A5B, 0x82A2B175229D6A5B};
     advance(&rng); // generator 0 = generator_seed
     advance(&rng); // generator 1 is unused
-    rng.seed_0 = advance(&rng); // reseed group
-    rng.seed_1 = 0x82A2B175229D6A5B;
+    // multispawners dont reseed until all pokemon are respawned
+    if (!IS_MULTISPAWNER) {
+        rng.seed_0 = advance(&rng); // reseed group
+        rng.seed_1 = 0x82A2B175229D6A5B;
+    }
     rng.seed_0 = advance(&rng); // seed generator
     rng.seed_1 = 0x82A2B175229D6A5B;
     advance(&rng); // encounter slot
