@@ -40,7 +40,7 @@ if two_abilities_bool:
 else:
     CONSTANTS["ABILITY"] = 2
 CONSTANTS["GENDER_RATIO"] = personal_info.gender_ratio
-if 1 <= CONSTANTS["GENDER_RATIO"] <= 254:
+if 1 <= CONSTANTS["GENDER_RATIO"] <= 253:
     CONSTANTS["GENDER"] = int(input("Gender (M=0, F=1): "))
 else:
     CONSTANTS["GENDER"] = 2

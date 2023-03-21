@@ -44,7 +44,7 @@ def generate(group_rng: Xoroshiro128PlusRejection) -> tuple:
     ability = fixed_rng.next_rand(2)
     gender_ratio = PERSONAL_INFO_LA[species[1]].gender_ratio
     gender = None
-    if 1 <= gender_ratio <= 254:
+    if 1 <= gender_ratio <= 253:
         gender = ("Male", "Female")[int((fixed_rng.next_rand(253) + 1) < gender_ratio)]
     nature = fixed_rng.next_rand(25)
     group_rng.next()  # generator 2, unused

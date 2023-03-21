@@ -56,7 +56,7 @@ bool verify(unsigned long fixed_seed) {
         return false;
     }
 
-    if (1 <= GENDER_RATIO && GENDER_RATIO <= 254) {
+    if (1 <= GENDER_RATIO && GENDER_RATIO <= 253) {
         unsigned char gender_val = rand(&rng, 253, 255);
         unsigned char gender = (gender_val + 1) < GENDER_RATIO;
         if (gender != GENDER) {
