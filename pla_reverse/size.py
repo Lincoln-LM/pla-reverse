@@ -45,8 +45,8 @@ def calc_display_size(
     else:
         # cm -> m
         height_value = np.round(height_absolute / np.float32(100), 2)
-        # g -> kg
-        weight_value = np.round(weight_absolute / np.float32(1000), 2)
+        # hg -> kg
+        weight_value = np.round(weight_absolute / np.float32(10), 2)
     return (height_value, weight_value)
 
 
