@@ -105,6 +105,8 @@ kernel(
     device_results,
 )
 
+cl.enqueue_copy(queue, device_results, host_results)
+cl.enqueue_copy(queue, device_count, host_count)
 
 host_results = np.empty_like(host_results)
 host_count = np.empty_like(host_count)
