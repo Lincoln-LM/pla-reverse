@@ -31,7 +31,7 @@ def calc_gender_odds(gender, gender_ratio):
 
 def calc_expected_seeds(has_two_abilities, gender, gender_ratio, sizes):
     """Calculate the expected amount of seeds from an iv search"""
-    return 2**34 / (
+    return 2 ** 34 / (
         (2 if has_two_abilities else 1)
         * 25
         * calc_gender_odds(gender, gender_ratio)

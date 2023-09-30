@@ -99,7 +99,7 @@ device_count = cl.Buffer(context, cl.mem_flags.READ_WRITE, host_count.nbytes)
 kernel = program.find_fixed_seeds
 kernel(
     queue,
-    (32**2, 32**2, 32**2),
+    (32 ** 2, 32 ** 2, 32 ** 2),
     None,
     device_count,
     device_results,

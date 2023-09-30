@@ -26,7 +26,7 @@ TABLE = {
 def generate(group_rng: Xoroshiro128PlusRejection) -> tuple:
     generator_seed = group_rng.next()
     generator_rng = Xoroshiro128PlusRejection(np.uint64(generator_seed))
-    slot = (generator_rng.next() / (2**64)) * TABLE[time_of_day]["Total"]
+    slot = (generator_rng.next() / (2 ** 64)) * TABLE[time_of_day]["Total"]
     for species, slot_threshold in TABLE[time_of_day]["Slots"].items():
         if slot < slot_threshold:
             break
