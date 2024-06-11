@@ -21,12 +21,12 @@ __kernel void find_generator_seeds(__global uint *cnt, __global ulong *res_g,
   unsigned long x1_slice = slices[x] | (slices[y] << 1) | (slices[z] << 2);
   unsigned long x0_slice =
       x0_from_x1(x1_slice) &
-      0b0011100000111000001110000011100000111000001110000011100000111000;
+      0x3838383838383838;
   unsigned long sub = random - x0_slice - x1_slice;
   unsigned long base_x1_slice_3 =
-      sub & 0b0000100000001000000010000000100000001000000010000000100000001000;
+      sub & 0x808080808080808;
   unsigned long sub_carry =
-      sub - 0b1100000011000000110000001100000011000000110000001100000011000000;
+      sub - 0xc0c0c0c0c0c0c0c0;
   unsigned long changed = (sub_carry ^ sub) & 0x808080808080808;
   for (unsigned long i0 = 0; i0 <= ((changed >> 11) & 1); i0++) {
     unsigned long part_0 = i0 << 11;
@@ -45,23 +45,23 @@ __kernel void find_generator_seeds(__global uint *cnt, __global ulong *res_g,
                 unsigned long x1_slice_3 = base_x1_slice_3 ^ part_6;
                 unsigned long x0_slice_3 =
                     x0_from_x1(x1_slice_3) &
-                    0b0100000001000000010000000100000001000000010000000100000001000000;
+                    0x4040404040404040;
                 unsigned long x0_slice_ = x0_slice | x0_slice_3;
                 unsigned long x1_slice_ = x1_slice | x1_slice_3;
                 unsigned long x1_slice_4 =
                     (random - x0_slice_ - x1_slice_) &
-                    0b0001000000010000000100000001000000010000000100000001000000010000;
+                    0x1010101010101010;
                 unsigned long x0_slice_4 =
                     x0_from_x1(x1_slice_4) &
-                    0b1000000010000000100000001000000010000000100000001000000010000000;
+                    0x8080808080808080;
                 x0_slice_ = x0_slice_ | x0_slice_4;
                 x1_slice_ = x1_slice_ | x1_slice_4;
                 unsigned long x1_slice_567 =
                     (random - x0_slice_ - x1_slice_) &
-                    0b1110000011100000111000001110000011100000111000001110000011100000;
+                    0xe0e0e0e0e0e0e0e0;
                 unsigned long x0_slice_567 =
                     x0_from_x1(x1_slice_567) &
-                    0b0000011100000111000001110000011100000111000001110000011100000111;
+                    0x707070707070707;
                 unsigned long x0 = x0_slice_ | x0_slice_567;
                 unsigned long x1 = x1_slice_ | x1_slice_567;
                 if ((x0 + x1) == random) {
