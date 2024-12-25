@@ -3,7 +3,7 @@
 import importlib.resources as pkg_resources
 from .. import shaders
 
-SHADER_NAMES = ("fixed_seed_shader", "generator_seed_shader", "group_seed_shader", "generic_next_64_shader")
+SHADER_NAMES = ("fixed_seed_shader", "generator_seed_shader", "group_seed_shader", "generic_next_64_shader", "fixed_seed_ec_pid_shader")
 SHADERS = {
     filename: pkg_resources.read_text(shaders, f"{filename}.cl")
     for filename in SHADER_NAMES
