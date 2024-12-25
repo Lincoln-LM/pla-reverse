@@ -1,6 +1,5 @@
 __constant uint SEED_MAT[32] = {}; // REPLACE: __constant uint SEED_MAT[32] = {SEED_MAT_REPLACE};
 __constant ulong NULL_SPACE[] = {}; // REPLACE: __constant ulong NULL_SPACE[] = {NULL_SPACE_REPLACE};
-__constant ulong TARGET_RAND = 0; // REPLACE: __constant ulong TARGET_RAND = TARGET_RAND_REPLACE;
 __constant ulong SHINY_ROLLS = 0; // REPLACE: __constant ulong SHINY_ROLLS = SHINY_ROLLS_REPLACE;
 __constant uint FIXED_SEED_LOW = 0; // REPLACE: __constant ulong FIXED_SEED_LOW = FIXED_SEED_LOW_REPLACE;
 __constant uint PID = 0; // REPLACE: __constant ulong PID = PID_REPLACE;
